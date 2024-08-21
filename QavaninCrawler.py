@@ -83,6 +83,3 @@ class QavaninCrawler:
 			
 		self.driver.quit()
 
-
-crawler = QavaninCrawler(max_pages_to_crawl=1)
-crawler.start()
