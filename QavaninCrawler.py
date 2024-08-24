@@ -14,8 +14,9 @@ logging.basicConfig(
     level=logging.INFO)
 
 class QavaninCrawler:
-	def __init__(self, max_pages_to_crawl):
-		self.max_mages_to_crawl = max_pages_to_crawl
+	def __init__(self, DB):
+		self.DB = DB
+		self.max_mages_to_crawl = int(getenv("MAX_PAGES_TO_CRAWL"))
 		self.url = getenv("CRAWLER_URL")
 		self.visited_urls = []
 		self.urls_to_visit = []
@@ -60,7 +61,9 @@ class QavaninCrawler:
 		parsed_url = urlparse(url)
 		query_string = parsed_url.query
 		params = parse_qs(query_string)
-		return params.get("IDS")
+		ids_value = params.get("IDS", [])
+		return int(ids_value[0])
+	
 	
 	def __get_text_of_approvals(self, url) -> str:
 		logging.info(f"Reading {url}")
@@ -76,9 +79,11 @@ class QavaninCrawler:
 			raw_text = self.__get_text_of_approvals(url)
 			markdown_text = markdownify(raw_text)
 			id = self.__get_approval_id_from_url(url)
-			with open(f"out/{id}.md", "w") as f:
-				f.write(markdownify(markdown_text))
-			# print(markdown_text, )
+			# print(type(id), ".................", id)
+
+			# save to databse
+			self.DB.add(id, markdown_text)
+			
 			self.visited_urls.append(url)
 			
 		self.driver.quit()
