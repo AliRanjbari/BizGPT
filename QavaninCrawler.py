@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from markdownify import markdownify 
 from urllib.parse import urlparse, parse_qs 
 from os import getenv
+import time
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)s:%(message)s',
@@ -24,12 +25,21 @@ class QavaninCrawler:
 			ChromeDriverManager().install())) 
 
 	def __get_content_of_page(self, url, img_src):
-		self.driver.get(url)
+		try_number = 0
+		while True:
+			try:
+				try_number += 1
+				self.driver.get(url)
 
-		# wait for redirection to the site (if needed)
-		WebDriverWait(self.driver, 10).until(
-			EC.presence_of_element_located((By.CSS_SELECTOR, f"img[src='{img_src}']"))
-		)
+				# wait for redirection to the site (if needed)
+				WebDriverWait(self.driver, 10).until(
+					EC.presence_of_element_located((By.CSS_SELECTOR, f"img[src='{img_src}']"))
+				)
+				return
+			except Exception as e:
+				logging.exception(f"Crawler: Error while reading the content of page. trying again after {try_number} second")
+				time.sleep(try_number)				
+
 
 		
 
@@ -79,10 +89,9 @@ class QavaninCrawler:
 			raw_text = self.__get_text_of_approvals(url)
 			markdown_text = markdownify(raw_text)
 			id = self.__get_approval_id_from_url(url)
-			# print(type(id), ".................", id)
 
 			# save to databse
-			self.DB.add(id, markdown_text)
+			self.DB.add_with_embedding(id, markdown_text)
 			
 			self.visited_urls.append(url)
 			

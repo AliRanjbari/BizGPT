@@ -4,15 +4,16 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from db import DB
 from embedding import Embedding
+from utils import cosine_similarity
 
 # Loading environment variables from .env file
 load_dotenv()
 
 # Initialize Embedding model
-# embedding = Embedding()
+embedding = Embedding()
 
 # # Create database
-# db = DB(embedding)
+db = DB(embedding)
 
 # # craete crawler
 # crawler = QavaninCrawler(db)
@@ -32,6 +33,13 @@ app = FastAPI()
 
 @app.get("/search")
 def read_root(q: str = None):
+    # get embeddings
+    query_embedding = embedding.get_embedding(q)
+    scores = {}
+    for (id, text, text_embedding) in db.fetch_all():
+        score = cosine_similarity(text_embedding.squeeze(), query_embedding.squeeze())
+        scores[f"https://qavanin.ir/Law/TreeText/?IDS={id}"] = score
 
-    return {"q": q}
+    sorted_scores = dict(sorted(scores.items(), key=lambda item: -item[1]))
+    return {"results": sorted_scores}
 

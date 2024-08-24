@@ -43,13 +43,13 @@ class DB:
         for row in rows:
             id, text, embedding_binary = row
             if embedding_binary:
-                embedding_array = np.frombuffer(embedding_binary, dtype=np.float64)
+                embedding_array = np.frombuffer(embedding_binary, dtype=np.float32)
                 yield (id, text, embedding_array)
             else:
                 continue
             
 
-    def add(self, id: int, text: str):
+    def add_with_embedding(self, id: int, text: str):
         text_embedding = self.embedding.get_embedding(text).tobytes()
         logging.info(f"DataBase: Adding data with id {id}")
         insert_query = '''
@@ -58,7 +58,7 @@ class DB:
                 ON CONFLICT (id) DO NOTHING;
                 '''
         try:
-            self.cur.execute(insert_query, (id, text, psycopg2.Binary(text_embedding)))
+            self.cur.execute(insert_query, (id, text, text_embedding))
             self.conn.commit()
         except Exception as e:
             self.conn.rollback()
@@ -67,4 +67,4 @@ class DB:
 
     def close_connection(self):
         self.con.close()
-        self.cur.close()
+        self.cur.close() 
