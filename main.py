@@ -9,28 +9,29 @@ from embedding import Embedding
 load_dotenv()
 
 # Initialize Embedding model
-embedding = Embedding()
+# embedding = Embedding()
 
-# Create database
-db = DB(embedding)
+# # Create database
+# db = DB(embedding)
 
-# craete crawler
-crawler = QavaninCrawler(db)
+# # craete crawler
+# crawler = QavaninCrawler(db)
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Crawling before server is starting
-    crawler.start()
-    yield    
-    # Close connection to database
-    db.close_connection()
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     # Crawling before server is starting
+#     crawler.start()
+#     yield    
+#     # Close connection to database
+#     db.close_connection()
 
 
-app = FastAPI(lifespan=lifespan)
+# app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 
 @app.get("/search")
-def read_root():
+def read_root(q: str = None):
 
-    return {"hello": "world"}
+    return {"q": q}
 
