@@ -1,5 +1,6 @@
 import psycopg2
 import logging
+from os import getenv
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)s:%(message)s',
@@ -9,10 +10,10 @@ logging.basicConfig(
 class DB:
     def __init__(self):
         self.conn = psycopg2.connect(
-            host="localhost",
-            database="qavanin",
-            user="admin",
-            password="12345"
+            host=getenv("DB_HOST"),
+            database=getenv("DB_DATABASE"),
+            user=getenv("DB_USER"),
+            password=getenv("DB_PASSWORD")
         )
         self.cur = self.conn.cursor()
         self.__create_table()

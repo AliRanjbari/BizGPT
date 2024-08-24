@@ -1,7 +1,7 @@
 # BizGPT Project
 This is BizGPT hiring project
 
-## I. Prerequisite
+## I. Prerequisites
 1. First install `Google chrome` and `chromedriver` so we can crawl dynamic sites. You can download the latest versions in this site:  
 `https://googlechromelabs.github.io/chrome-for-testing/`
 2. Then make a virtual environment and change the environment to the new environment
@@ -23,4 +23,8 @@ sudo docker run \
 postgres
 ``` 
 
-## II. 
+## II. Executing
+Run the server using this command:  
+```
+fastapi dev main.py
+```

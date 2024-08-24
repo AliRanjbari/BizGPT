@@ -7,7 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from markdownify import markdownify 
 from urllib.parse import urlparse, parse_qs 
-
+from os import getenv
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)s:%(message)s',
@@ -16,7 +16,7 @@ logging.basicConfig(
 class QavaninCrawler:
 	def __init__(self, max_pages_to_crawl):
 		self.max_mages_to_crawl = max_pages_to_crawl
-		self.url = 'https://qavanin.ir/' 
+		self.url = getenv("CRAWLER_URL")
 		self.visited_urls = []
 		self.urls_to_visit = []
 		self.driver = webdriver.Chrome(service=ChromeService( 

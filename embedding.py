@@ -1,10 +1,10 @@
 from transformers import AutoTokenizer, AutoModel
 import torch
-
+from os import getenv
 
 def get_embeddings(text: str):
 
-    model_name = "bert-base-uncased"
+    model_name = getenv("MODEL_NAME")
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     model = AutoModel.from_pretrained(model_name)
 
