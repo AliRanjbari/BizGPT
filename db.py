@@ -2,7 +2,7 @@ import psycopg2
 import logging
 from os import getenv
 from embedding import Embedding
-import numpy
+import numpy as np
 
 logging.basicConfig(
     format='%(asctime)s %(levelname)s:%(message)s',
@@ -33,6 +33,21 @@ class DB:
         ''')
 
         self.conn.commit()
+
+
+    def fetch_all(self):
+        query = "SELECT * FROM approvals"
+        self.cur.execute(query)
+        rows = self.cur.fetchall()
+
+        for row in rows:
+            id, text, embedding_binary = row
+            if embedding_binary:
+                embedding_array = np.frombuffer(embedding_binary, dtype=np.float64)
+                yield (id, text, embedding_array)
+            else:
+                continue
+            
 
     def add(self, id: int, text: str):
         text_embedding = self.embedding.get_embedding(text).tobytes()
