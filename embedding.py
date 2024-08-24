@@ -2,19 +2,23 @@ from transformers import AutoTokenizer, AutoModel
 import torch
 from os import getenv
 
-def get_embeddings(text: str):
+        
+DEFAULT_MODEL_NAME = getenv("MODEL_NAME")
 
-    model_name = getenv("MODEL_NAME")
-    tokenizer = AutoTokenizer.from_pretrained(model_name)
-    model = AutoModel.from_pretrained(model_name)
+class Embedding:
+    def __init__(self, model_name=DEFAULT_MODEL_NAME):
+        self.model_name = model_name
+        self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
+        self.model = AutoModel.from_pretrained(self.model_name)
 
-    text = "This is an example sentence"
-    inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
-    with torch.no_grad():
-        outputs = model(**inputs)
+    def get_embedding(self, text: str):
+        # text = "This is an example sentence"
+        inputs = self.tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+        with torch.no_grad():
+            outputs = self.model(**inputs)
 
-    sentence_embedding = outputs.last_hidden_state.mean(dim=1)
-    sentence_embedding_np = sentence_embedding.numpy()
+        sentence_embedding = outputs.last_hidden_state.mean(dim=1)
+        sentence_embedding_np = sentence_embedding.numpy()
 
-    print("Sentence Embedding", sentence_embedding_np)
-    return sentence_embedding_np
+        print("Sentence Embedding", sentence_embedding_np)
+        return sentence_embedding_np
