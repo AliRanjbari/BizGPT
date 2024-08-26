@@ -15,20 +15,20 @@ embedding = Embedding()
 # # Create database
 db = DB(embedding)
 
-# # craete crawler
-# crawler = QavaninCrawler(db)
+# craete crawler
+crawler = QavaninCrawler(db)
 
-# @asynccontextmanager
-# async def lifespan(app: FastAPI):
-#     # Crawling before server is starting
-#     crawler.start()
-#     yield    
-#     # Close connection to database
-#     db.close_connection()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Crawling before server is starting
+    crawler.start()
+    yield    
+    # Close connection to database
+    db.close_connection()
 
 
-# app = FastAPI(lifespan=lifespan)
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
+# app = FastAPI()
 
 
 @app.get("/search")
