@@ -24,11 +24,11 @@ In This section We discuss how to make environment, install dependancies and req
 ```
 python3 -m venv env && source env/bin/activate
 ```
-1. Now install the requirements with this command:  
+3. Now install the requirements with this command:  
 ```
 pip3 -r install < requirements.txt
 ```
-1. You should setup your postgres database. you can achieve this with this command:  
+4. You should setup your postgres database. you can achieve this with this command:  
 ```
 sudo docker run \
 --name BizGPT \
@@ -38,6 +38,7 @@ sudo docker run \
 -p 5432:5432 \  
 postgres
 ``` 
+5. make an .env file like .env-sample
 
 ### II. Executing
 Run the server using this command:  
